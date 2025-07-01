@@ -53,7 +53,7 @@ export const ImageGenerator = () => {
 
     try {
       const { data } = await axios.post(
-        "http://localhost:3000/api/image-generation",
+        `${process.env.NEXTAUTH_URL}/api/image-generation`,
         {
           prompt,
         }
@@ -73,11 +73,14 @@ export const ImageGenerator = () => {
     setIsSharing(true);
     if (name && prompt && generatedImage) {
       try {
-        const { data } = await axios.post("http://localhost:3000/api/post", {
-          name,
-          prompt,
-          photo: generatedImage,
-        });
+        const { data } = await axios.post(
+          `${process.env.NEXTAUTH_URL}/api/post`,
+          {
+            name,
+            prompt,
+            photo: generatedImage,
+          }
+        );
         console.log(data);
         toast("Shared with Community");
         router.push("/community");

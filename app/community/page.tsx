@@ -45,7 +45,7 @@ export default async function Community(props: { searchParams: SearchParams }) {
 
   let posts: Post[] = [];
   try {
-    const res = await fetch("http://localhost:3000/api/post", {
+    const res = await fetch(`${process.env.NEXTAUTH_URL}/api/post`, {
       cache: "no-store",
     });
     const data = await res.json();
