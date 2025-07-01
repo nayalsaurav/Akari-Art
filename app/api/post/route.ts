@@ -1,10 +1,10 @@
 import cloudinary from "@/lib/cloudinary";
-import { dbConnect } from "@/lib/databse";
+import { dbConnect } from "@/lib/database";
 import Post from "@/model/post";
 import { NextRequest, NextResponse } from "next/server";
 
 // GET all posts
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     await dbConnect();
     const posts = await Post.find({});

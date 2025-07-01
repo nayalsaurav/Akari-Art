@@ -2,19 +2,18 @@
 import { useState } from "react";
 import { Download } from "lucide-react";
 import { saveAs } from "file-saver";
+import Image from "next/image";
 
 interface CardProps {
-  _id: string;
   name: string;
   prompt: string;
   photo: string;
 }
 
-const Card = ({ _id, name, prompt, photo }: CardProps) => {
+const Card = ({ name, prompt, photo }: CardProps) => {
   const [showOverlay, setShowOverlay] = useState(false);
 
   const toggleOverlay = () => {
-    // Optional: Only toggle on touch devices
     if (window.innerWidth < 768) {
       setShowOverlay(!showOverlay);
     }
@@ -25,10 +24,12 @@ const Card = ({ _id, name, prompt, photo }: CardProps) => {
       className="rounded-xl group transition-all duration-500 relative shadow-card hover:shadow-cardhover card"
       onClick={toggleOverlay}
     >
-      <img
+      <Image
         src={photo}
         alt={prompt}
         className="w-full h-full object-cover rounded-xl"
+        width={400}
+        height={500}
       />
       <div
         className={`${

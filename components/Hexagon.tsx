@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 export const Hexagon: React.FC = () => {
@@ -41,7 +42,12 @@ export const Hexagon: React.FC = () => {
               : {}) as React.CSSProperties
           }
         >
-          <img src={imgs[i % ni]} alt={`hex-${i}`} />
+          <Image
+            src={imgs[i % ni]}
+            alt={`hex-${i}`}
+            width={500} // Required
+            height={400}
+          />
         </div>
       ))}
     </div>

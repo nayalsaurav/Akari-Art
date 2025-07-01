@@ -30,26 +30,26 @@ const RenderPosts = ({ data, title }: { data: Post[]; title: string }) => {
   );
 };
 
-export default async function Community({
-  searchParams,
-}: {
-  searchParams?: { search?: string };
-}) {
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
+
+export default async function Community(props: { searchParams: SearchParams }) {
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user) {
     redirect("/");
   }
-  const { search } = await searchParams!;
-  let posts: Post[] = [];
+  const searchParams = await props.searchParams;
+  const search = Array.isArray(searchParams.search)
+    ? searchParams.search[0]
+    : searchParams.search ?? "";
 
+  let posts: Post[] = [];
   try {
     const res = await fetch("http://localhost:3000/api/post", {
       cache: "no-store",
     });
     const data = await res.json();
     posts = data.data?.reverse();
-
     if (search) {
       posts = posts.filter(
         (post) =>

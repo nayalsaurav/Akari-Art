@@ -1,8 +1,7 @@
 "use client";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Paintbrush,
-  Download,
   Share2,
   Loader2,
   ImageIcon,
@@ -15,9 +14,10 @@ import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export const ImageGenerator = () => {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const router = useRouter();
   const [name, setName] = useState<string>(session?.user.name ?? "");
   const [prompt, setPrompt] = useState("");
@@ -58,6 +58,7 @@ export const ImageGenerator = () => {
           prompt,
         }
       );
+
       setGeneratedImage(data?.photo);
     } catch (error) {
       console.error("Generation failed:", error);
@@ -77,6 +78,7 @@ export const ImageGenerator = () => {
           prompt,
           photo: generatedImage,
         });
+        console.log(data);
         toast("Shared with Community");
         router.push("/community");
       } catch (error) {
@@ -237,7 +239,7 @@ export const ImageGenerator = () => {
 
             {generatedImage && !showSkeleton && (
               <div className="relative h-full group">
-                <img
+                <Image
                   src={generatedImage}
                   alt={name || "Generated artwork"}
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
