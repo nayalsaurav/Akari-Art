@@ -15,7 +15,7 @@ const page = async () => {
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user) {
-    redirect("/");
+    redirect("/signin");
   }
   return (
     <section className="mt-30 relative z-7">

@@ -15,11 +15,12 @@ import { Textarea } from "./ui/textarea";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-
+// import Image from "next/image";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 export const ImageGenerator = () => {
   const { data: session } = useSession();
   const router = useRouter();
-  const [name, setName] = useState<string>(session?.user.name ?? "");
+  const name: string = session?.user.name!;
   const [prompt, setPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
@@ -28,11 +29,7 @@ export const ImageGenerator = () => {
   const [errors, setErrors] = useState<{ name?: string; prompt?: string }>({});
 
   const validateForm = () => {
-    const newErrors: { name?: string; prompt?: string } = {};
-
-    if (!name.trim()) {
-      newErrors.name = "Name is required";
-    }
+    const newErrors: { prompt?: string } = {};
 
     if (!prompt.trim()) {
       newErrors.prompt = "Prompt is required";
@@ -52,12 +49,9 @@ export const ImageGenerator = () => {
     setGeneratedImage(null);
 
     try {
-      const { data } = await axios.post(
-        `${process.env.NEXTAUTH_URL}/api/image-generation`,
-        {
-          prompt,
-        }
-      );
+      const { data } = await axios.post(`${BASE_URL}/api/image-generation`, {
+        prompt,
+      });
 
       setGeneratedImage(data?.photo);
     } catch (error) {
@@ -73,14 +67,11 @@ export const ImageGenerator = () => {
     setIsSharing(true);
     if (name && prompt && generatedImage) {
       try {
-        const { data } = await axios.post(
-          `${process.env.NEXTAUTH_URL}/api/post`,
-          {
-            name,
-            prompt,
-            photo: generatedImage,
-          }
-        );
+        const { data } = await axios.post(`${BASE_URL}/api/post`, {
+          name,
+          prompt,
+          photo: generatedImage,
+        });
         console.log(data);
         toast("Shared with Community");
         router.push("/community");
@@ -121,26 +112,12 @@ export const ImageGenerator = () => {
                 id="name"
                 type="text"
                 value={name}
-                onChange={(e) => {
-                  setName(e.target.value);
-                  if (errors.name)
-                    setErrors((prev) => ({ ...prev, name: undefined }));
-                }}
+                disabled
                 placeholder="Enter a name for your creation..."
                 className={`w-full px-4 py-3 bg-gray-800/50 border rounded-lg text-white placeholder-gray-500 
                   transition-all duration-200 focus:outline-none focus:ring-2 backdrop-blur-sm
-                  ${
-                    errors.name
-                      ? "border-red-500 focus:ring-red-500/50"
-                      : "border-gray-700 focus:border-purple-500 focus:ring-purple-500/50 hover:border-gray-600"
-                  }`}
+                  ${"border-gray-700 focus:border-purple-500 focus:ring-purple-500/50 hover:border-gray-600"}`}
               />
-              {errors.name && (
-                <div className="flex items-center gap-2 mt-2 text-red-400 text-sm">
-                  <AlertCircle size={16} />
-                  {errors.name}
-                </div>
-              )}
             </div>
           </div>
 
@@ -246,6 +223,8 @@ export const ImageGenerator = () => {
                   src={generatedImage}
                   alt={name || "Generated artwork"}
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  width={500}
+                  height={500}
                 />
               </div>
             )}

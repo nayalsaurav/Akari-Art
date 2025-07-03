@@ -1,11 +1,19 @@
-import cloudinary from "@/lib/cloudinary";
+import { authOptions } from "@/lib/auth";
 import { dbConnect } from "@/lib/database";
 import Post from "@/model/post";
+import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
 // GET all posts
 export async function GET() {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
+      return NextResponse.json(
+        { error: "Unauthorized access" },
+        { status: 400 }
+      );
+    }
     await dbConnect();
     const posts = await Post.find({});
     return NextResponse.json(
@@ -35,13 +43,19 @@ export async function GET() {
 // CREATE a post
 export async function POST(request: NextRequest) {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
+      return NextResponse.json(
+        { error: "Unauthorized access" },
+        { status: 400 }
+      );
+    }
     await dbConnect();
     const { name, prompt, photo } = await request.json();
-    const photoUrl = await cloudinary.uploader.upload(photo);
     const newPost = await Post.create({
       name,
       prompt,
-      photo: photoUrl.secure_url,
+      photo,
     });
 
     return NextResponse.json(

@@ -1,10 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  allowedDevOrigins: [" http://localhost:3000", " http://192.168.1.6:3000"],
+  allowedDevOrigins: ["http://localhost:3000", "http://192.168.1.6:3000"],
   images: {
-    domains: ["images.unsplash.com", "res.cloudinary.com"],
+    domains: ["res.cloudinary.com"],
   },
 };
 

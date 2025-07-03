@@ -35,9 +35,9 @@ type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 export default async function Community(props: { searchParams: SearchParams }) {
   const session = await getServerSession(authOptions);
 
-  if (!session || !session.user) {
-    redirect("/");
-  }
+  // if (!session || !session.user) {
+  //   redirect("/signin");
+  // }
   const searchParams = await props.searchParams;
   const search = Array.isArray(searchParams.search)
     ? searchParams.search[0]
@@ -45,9 +45,10 @@ export default async function Community(props: { searchParams: SearchParams }) {
 
   let posts: Post[] = [];
   try {
-    const res = await fetch(`${process.env.NEXTAUTH_URL}/api/post`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/post`, {
       cache: "no-store",
     });
+    console.log(res);
     const data = await res.json();
     posts = data.data?.reverse();
     if (search) {
