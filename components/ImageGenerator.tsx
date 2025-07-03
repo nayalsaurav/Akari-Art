@@ -20,7 +20,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 export const ImageGenerator = () => {
   const { data: session } = useSession();
   const router = useRouter();
-  const name: string = session?.user.name!;
+  const name = session?.user.name as string;
   const [prompt, setPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
