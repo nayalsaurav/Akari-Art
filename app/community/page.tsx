@@ -35,9 +35,9 @@ type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 export default async function Community(props: { searchParams: SearchParams }) {
   const session = await getServerSession(authOptions);
 
-  // if (!session || !session.user) {
-  //   redirect("/signin");
-  // }
+  if (!session || !session.user) {
+    redirect("/signin");
+  }
   const searchParams = await props.searchParams;
   const search = Array.isArray(searchParams.search)
     ? searchParams.search[0]
