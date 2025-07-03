@@ -16,7 +16,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 // import Image from "next/image";
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 export const ImageGenerator = () => {
   const { data: session } = useSession();
   const router = useRouter();
