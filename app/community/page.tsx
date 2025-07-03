@@ -1,18 +1,13 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Card from "@/components/Card";
 import React from "react";
 import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
-
-interface Post {
-  _id: string;
-  name: string;
-  prompt: string;
-  photo: string;
-}
+import Post, { IPost } from "@/model/post";
+import { RenderPosts } from "@/components/RenderPosts";
+import { dbConnect } from "@/lib/database";
 
 export const metadata: Metadata = {
   title: "Akari Art | Community",
@@ -20,18 +15,8 @@ export const metadata: Metadata = {
     "Generate stunning visuals using Akari AI or explore community creations.",
 };
 
-const RenderPosts = ({ data, title }: { data: Post[]; title: string }) => {
-  if (data?.length > 0) {
-    return data.map((post) => <Card key={post._id} {...post} />);
-  }
-
-  return (
-    <h2 className="mt-5 font-bold text-[#6449ff] text-xl uppercase">{title}</h2>
-  );
-};
-
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
-
+type SafePost = Omit<IPost, "_id"> & { _id: string };
 export default async function Community(props: { searchParams: SearchParams }) {
   const session = await getServerSession(authOptions);
 
@@ -43,14 +28,15 @@ export default async function Community(props: { searchParams: SearchParams }) {
     ? searchParams.search[0]
     : searchParams.search ?? "";
 
-  let posts: Post[] = [];
+  let posts: SafePost[] = [];
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/post`, {
-      cache: "no-store",
-    });
-    console.log(res);
-    const data = await res.json();
-    posts = data.data?.reverse();
+    await dbConnect();
+    posts = (await Post.find({}).lean()).map((post) => ({
+      ...post,
+      _id: post._id.toString(),
+    }));
+    posts = posts.reverse();
+    console.log(posts);
     if (search) {
       posts = posts.filter(
         (post) =>

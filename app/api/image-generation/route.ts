@@ -1,18 +1,9 @@
-import { authOptions } from "@/lib/auth";
 import cloudinary from "@/lib/cloudinary";
 import axios from "axios";
-import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
-      return NextResponse.json(
-        { error: "Unauthorized access" },
-        { status: 400 }
-      );
-    }
     const { prompt }: { prompt: string } = await request.json();
     const CLOUDFLARE_ID = process.env.CLOUDFLARE_ID;
     const CLOUDFLARE_API_KEY = process.env.CLOUDFLARE_API_KEY;
